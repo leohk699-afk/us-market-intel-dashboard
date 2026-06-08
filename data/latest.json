@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-06-08T12:22:13+00:00",
-  "version": "v1.0",
+  "generated_at": "2026-06-08T13:13:16+00:00",
+  "version": "v2.0",
   "overall": {
-    "score": 51.8,
+    "score": 54.2,
     "status": "yellow",
     "status_label": "黄色：谨慎",
     "summary": "市场处于黄色谨慎状态。当前主要压力来自：CPI YoY、PCE YoY、Core PCE YoY。 可以交易，但应等待确认并控制仓位。"
@@ -12,7 +12,7 @@
       "id": "rates",
       "name": "利率与美债",
       "weight": 25,
-      "score": 56.7,
+      "score": 58.0,
       "status": "yellow",
       "indicators": [
         {
@@ -72,26 +72,13 @@
           "label": "10Y-2Y Curve",
           "unit": "bp",
           "source": "derived",
-          "date": null,
-          "value": null,
-          "change_1": null,
-          "change_5": null,
-          "change_20": null,
-          "risk_score": 50,
-          "status": "yellow"
-        },
-        {
-          "id": "curve_10y2y",
-          "label": "10Y-2Y Curve",
-          "unit": "bp",
-          "source": "derived",
           "date": "2026-06-04",
           "value": 41.99999999999999,
           "change_1": null,
           "change_5": null,
           "change_20": null,
           "risk_score": 50,
-          "status": "green"
+          "status": "yellow"
         }
       ]
     },
@@ -247,7 +234,7 @@
       "id": "credit_liquidity",
       "name": "信用与流动性",
       "weight": 15,
-      "score": 42.5,
+      "score": 38.8,
       "status": "green",
       "indicators": [
         {
@@ -286,8 +273,8 @@
           "change_1": 7112.0,
           "change_5": 11545.0,
           "change_20": 129795.0,
-          "risk_score": 50,
-          "status": "yellow"
+          "risk_score": 40,
+          "status": "green"
         },
         {
           "id": "rrp",
@@ -299,14 +286,14 @@
           "change_1": -0.3610000000000001,
           "change_5": -10.916,
           "change_20": -0.01200000000000001,
-          "risk_score": 50,
-          "status": "yellow"
+          "risk_score": 45,
+          "status": "green"
         },
         {
           "id": "dxy",
           "label": "DXY Dollar Index",
           "unit": "",
-          "source": "market_data_provider",
+          "source": "manual_or_provider",
           "date": null,
           "value": null,
           "change_1": null,
@@ -321,7 +308,7 @@
       "id": "market_structure",
       "name": "美股内部结构",
       "weight": 15,
-      "score": 50.0,
+      "score": 65.0,
       "status": "yellow",
       "indicators": [
         {
@@ -329,12 +316,12 @@
           "label": "SPY",
           "unit": "USD",
           "source": "market_data_provider",
-          "date": null,
-          "value": null,
-          "change_1": null,
-          "change_5": null,
-          "change_20": null,
-          "risk_score": 50,
+          "date": "2026-06-05",
+          "value": 737.55,
+          "change_1": -19.540000000000077,
+          "change_5": -18.930000000000064,
+          "change_20": 5.969999999999914,
+          "risk_score": 65,
           "status": "yellow"
         },
         {
@@ -395,7 +382,7 @@
       "id": "commodities",
       "name": "商品与避险",
       "weight": 5,
-      "score": 57.5,
+      "score": 65.0,
       "status": "yellow",
       "indicators": [
         {
@@ -428,7 +415,7 @@
           "id": "silver",
           "label": "Silver Price",
           "unit": "USD/oz",
-          "source": "market_data_provider",
+          "source": "manual_or_provider",
           "date": null,
           "value": null,
           "change_1": null,
@@ -441,7 +428,7 @@
           "id": "gold_silver_ratio",
           "label": "Gold/Silver Ratio",
           "unit": "x",
-          "source": "derived",
+          "source": "manual_or_provider",
           "date": null,
           "value": null,
           "change_1": null,
@@ -495,17 +482,217 @@
       "score": 70
     },
     {
-      "module": "商品与避险",
-      "id": "wti",
-      "label": "WTI Crude Oil",
-      "value": 95.96,
-      "unit": "USD/bbl",
+      "module": "美股内部结构",
+      "id": "spy",
+      "label": "SPY",
+      "value": 737.55,
+      "unit": "USD",
       "score": 65
     }
   ],
+  "watchlist": {
+    "provider": "Alpha Vantage daily close",
+    "note": "免费API请求数有限；V2仅做日线级观察池，不做实时交易报价。",
+    "groups": [
+      {
+        "id": "core_etfs",
+        "name": "大盘核心ETF",
+        "description": "判断大盘、科技成长和小盘风险偏好的基础框架。",
+        "items": [
+          {
+            "symbol": "SPY",
+            "name": "S&P 500 ETF",
+            "category": "core",
+            "category_label": "核心ETF",
+            "date": "2026-06-05",
+            "price": 737.55,
+            "change_1_pct": -2.580934895454976,
+            "change_5_pct": -2.502379441624374,
+            "change_20_pct": 0.8160419913064755,
+            "risk_score": 55,
+            "status": "yellow",
+            "status_label": "黄色：谨慎",
+            "hint": "维持观察，结合大盘方向决定。"
+          },
+          {
+            "symbol": "QQQ",
+            "name": "Nasdaq 100 ETF",
+            "category": "core",
+            "category_label": "核心ETF",
+            "date": null,
+            "price": null,
+            "change_1_pct": null,
+            "change_5_pct": null,
+            "change_20_pct": null,
+            "risk_score": 50,
+            "status": "yellow",
+            "status_label": "黄色：谨慎",
+            "hint": "维持观察，结合大盘方向决定。"
+          },
+          {
+            "symbol": "IWM",
+            "name": "Russell 2000 ETF",
+            "category": "small_cap",
+            "category_label": "小盘风险偏好",
+            "date": null,
+            "price": null,
+            "change_1_pct": null,
+            "change_5_pct": null,
+            "change_20_pct": null,
+            "risk_score": 50,
+            "status": "yellow",
+            "status_label": "黄色：谨慎",
+            "hint": "小盘对利率和信用环境敏感，暂不宜激进。"
+          },
+          {
+            "symbol": "SMH",
+            "name": "Semiconductor ETF",
+            "category": "ai_semis",
+            "category_label": "AI/半导体",
+            "date": null,
+            "price": null,
+            "change_1_pct": null,
+            "change_5_pct": null,
+            "change_20_pct": null,
+            "risk_score": 50,
+            "status": "yellow",
+            "status_label": "黄色：谨慎",
+            "hint": "主线股可继续跟踪，利率上行时避免追高。"
+          }
+        ]
+      },
+      {
+        "id": "ai_semis",
+        "name": "AI / 半导体链",
+        "description": "用于观察AI主线、算力链和半导体风险偏好是否延续。",
+        "items": [
+          {
+            "symbol": "NVDA",
+            "name": "NVIDIA",
+            "category": "ai_semis",
+            "category_label": "AI/半导体",
+            "date": null,
+            "price": null,
+            "change_1_pct": null,
+            "change_5_pct": null,
+            "change_20_pct": null,
+            "risk_score": 50,
+            "status": "yellow",
+            "status_label": "黄色：谨慎",
+            "hint": "主线股可继续跟踪，利率上行时避免追高。"
+          },
+          {
+            "symbol": "AMD",
+            "name": "AMD",
+            "category": "ai_semis",
+            "category_label": "AI/半导体",
+            "date": null,
+            "price": null,
+            "change_1_pct": null,
+            "change_5_pct": null,
+            "change_20_pct": null,
+            "risk_score": 50,
+            "status": "yellow",
+            "status_label": "黄色：谨慎",
+            "hint": "主线股可继续跟踪，利率上行时避免追高。"
+          },
+          {
+            "symbol": "AVGO",
+            "name": "Broadcom",
+            "category": "ai_semis",
+            "category_label": "AI/半导体",
+            "date": null,
+            "price": null,
+            "change_1_pct": null,
+            "change_5_pct": null,
+            "change_20_pct": null,
+            "risk_score": 50,
+            "status": "yellow",
+            "status_label": "黄色：谨慎",
+            "hint": "主线股可继续跟踪，利率上行时避免追高。"
+          }
+        ]
+      },
+      {
+        "id": "high_beta",
+        "name": "高波动成长股",
+        "description": "对利率、VIX和市场情绪变化较敏感，适合观察风险偏好强弱。",
+        "items": [
+          {
+            "symbol": "TSLA",
+            "name": "Tesla",
+            "category": "high_beta",
+            "category_label": "高波动成长",
+            "date": null,
+            "price": null,
+            "change_1_pct": null,
+            "change_5_pct": null,
+            "change_20_pct": null,
+            "risk_score": 50,
+            "status": "yellow",
+            "status_label": "黄色：谨慎",
+            "hint": "可以观察强弱，但要等回踩或放量确认。"
+          },
+          {
+            "symbol": "PLTR",
+            "name": "Palantir",
+            "category": "high_beta",
+            "category_label": "高波动成长",
+            "date": null,
+            "price": null,
+            "change_1_pct": null,
+            "change_5_pct": null,
+            "change_20_pct": null,
+            "risk_score": 50,
+            "status": "yellow",
+            "status_label": "黄色：谨慎",
+            "hint": "可以观察强弱，但要等回踩或放量确认。"
+          }
+        ]
+      },
+      {
+        "id": "crypto_related",
+        "name": "加密相关股",
+        "description": "对美元流动性、纳指风险偏好和BTC波动更敏感。",
+        "items": [
+          {
+            "symbol": "MSTR",
+            "name": "MicroStrategy",
+            "category": "crypto",
+            "category_label": "加密相关",
+            "date": null,
+            "price": null,
+            "change_1_pct": null,
+            "change_5_pct": null,
+            "change_20_pct": null,
+            "risk_score": 50,
+            "status": "yellow",
+            "status_label": "黄色：谨慎",
+            "hint": "仓位要轻；重点看美元、纳指和BTC风险偏好。"
+          },
+          {
+            "symbol": "COIN",
+            "name": "Coinbase",
+            "category": "crypto",
+            "category_label": "加密相关",
+            "date": null,
+            "price": null,
+            "change_1_pct": null,
+            "change_5_pct": null,
+            "change_20_pct": null,
+            "risk_score": 50,
+            "status": "yellow",
+            "status_label": "黄色：谨慎",
+            "hint": "仓位要轻；重点看美元、纳指和BTC风险偏好。"
+          }
+        ]
+      }
+    ]
+  },
   "notes": [
     "This is a rules-based market intelligence dashboard, not investment advice.",
-    "ETF/stock quote fields require ALPHA_VANTAGE_API_KEY or another licensed market-data provider.",
-    "FRED_API_KEY is recommended for production reliability, although a public CSV fallback is included for personal prototyping."
+    "V2 watchlist uses Alpha Vantage daily close data when ALPHA_VANTAGE_API_KEY is configured.",
+    "Free market-data APIs are suitable for daily monitoring, not real-time trading execution.",
+    "FRED series failures are skipped instead of breaking the whole daily update."
   ]
 }
