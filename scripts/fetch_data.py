@@ -43,42 +43,26 @@ ALPHA_CACHE: Dict[str, List[Dict[str, Any]]] = {}
 
 WATCHLIST_GROUPS = [
     {
-        "id": "core_etfs",
-        "name": "大盘核心ETF",
-        "description": "判断大盘、科技成长和小盘风险偏好的基础框架。",
+        "id": "core_indices",
+        "name": "核心指数 / ETF",
+        "description": "保留少数关键指数，用于判断大盘、科技成长、小盘和半导体主线环境。",
         "items": [
             {"symbol": "SPY", "name": "S&P 500 ETF", "category": "core"},
             {"symbol": "QQQ", "name": "Nasdaq 100 ETF", "category": "core"},
             {"symbol": "IWM", "name": "Russell 2000 ETF", "category": "small_cap"},
             {"symbol": "SMH", "name": "Semiconductor ETF", "category": "ai_semis"},
+            {"symbol": "RSP", "name": "Equal Weight S&P 500 ETF", "category": "core"},
         ],
     },
     {
-        "id": "ai_semis",
-        "name": "AI / 半导体链",
-        "description": "用于观察AI主线、算力链和半导体风险偏好是否延续。",
+        "id": "focused_stocks",
+        "name": "重点个股",
+        "description": "按你的要求仅保留 MU、AMD、RDW、MRVL 四只个股，减少噪音并节省免费 API 请求额度。",
         "items": [
-            {"symbol": "NVDA", "name": "NVIDIA", "category": "ai_semis"},
+            {"symbol": "MU", "name": "Micron Technology", "category": "ai_semis"},
             {"symbol": "AMD", "name": "AMD", "category": "ai_semis"},
-            {"symbol": "AVGO", "name": "Broadcom", "category": "ai_semis"},
-        ],
-    },
-    {
-        "id": "high_beta",
-        "name": "高波动成长股",
-        "description": "对利率、VIX和市场情绪变化较敏感，适合观察风险偏好强弱。",
-        "items": [
-            {"symbol": "TSLA", "name": "Tesla", "category": "high_beta"},
-            {"symbol": "PLTR", "name": "Palantir", "category": "high_beta"},
-        ],
-    },
-    {
-        "id": "crypto_related",
-        "name": "加密相关股",
-        "description": "对美元流动性、纳指风险偏好和BTC波动更敏感。",
-        "items": [
-            {"symbol": "MSTR", "name": "MicroStrategy", "category": "crypto"},
-            {"symbol": "COIN", "name": "Coinbase", "category": "crypto"},
+            {"symbol": "RDW", "name": "Redwire", "category": "high_beta"},
+            {"symbol": "MRVL", "name": "Marvell Technology", "category": "ai_semis"},
         ],
     },
 ]
@@ -557,7 +541,7 @@ def build_dashboard_payload() -> Dict[str, Any]:
 
     payload = {
         "generated_at": now_utc_iso(),
-        "version": "v2.0",
+        "version": "v2.1",
         "overall": {
             "score": round(weighted_score, 1),
             "status": overall_status,
@@ -569,7 +553,7 @@ def build_dashboard_payload() -> Dict[str, Any]:
         "watchlist": watchlist,
         "notes": [
             "This is a rules-based market intelligence dashboard, not investment advice.",
-            "V2 watchlist uses Alpha Vantage daily close data when ALPHA_VANTAGE_API_KEY is configured.",
+            "V2.1 watchlist keeps core ETFs plus MU, AMD, RDW, and MRVL only.",
             "Free market-data APIs are suitable for daily monitoring, not real-time trading execution.",
             "FRED series failures are skipped instead of breaking the whole daily update.",
         ],
