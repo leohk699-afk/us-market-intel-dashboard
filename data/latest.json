@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-08T13:23:11+00:00",
+  "generated_at": "2026-06-08T13:31:09+00:00",
   "version": "v2.1",
   "overall": {
     "score": 54.2,
@@ -586,15 +586,15 @@
             "name": "Micron Technology",
             "category": "ai_semis",
             "category_label": "AI/半导体",
-            "date": null,
-            "price": null,
-            "change_1_pct": null,
-            "change_5_pct": null,
-            "change_20_pct": null,
-            "risk_score": 50,
-            "status": "yellow",
-            "status_label": "黄色：谨慎",
-            "hint": "主线股可继续跟踪，利率上行时避免追高。"
+            "date": "2026-06-05",
+            "price": 864.01,
+            "change_1_pct": -13.252008032128515,
+            "change_5_pct": -11.018537590113286,
+            "change_20_pct": 33.617370057065095,
+            "risk_score": 79,
+            "status": "red",
+            "status_label": "红色：防守",
+            "hint": "AI主线仍可观察，但当前不适合无确认追涨。"
           },
           {
             "symbol": "AMD",
