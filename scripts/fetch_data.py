@@ -5,12 +5,13 @@ Output:
   data/history.json
 
 Environment variables:
-  FRED_API_KEY              Optional. Recommended for production.
-  ALPHA_VANTAGE_API_KEY     Optional. Used for ETF/stock market data.
+  FRED_API_KEY              Recommended for macro data.
+  ALPHA_VANTAGE_API_KEY     Optional. Used for ETF/stock watchlist data.
 
-Design note:
-  V1 prioritizes robust official macro data from FRED. Market quotes are optional,
-  because exchange-licensed data should ideally come from a paid/authorized provider.
+V2 adds:
+  - Robust per-indicator error handling: one failed series will not break the run.
+  - Daily ETF/stock watchlist through Alpha Vantage.
+  - Macro-to-stock risk hints for AI, high beta, and crypto-related names.
 """
 
 from __future__ import annotations
@@ -36,7 +37,51 @@ HISTORY_PATH = DATA_DIR / "history.json"
 FRED_API_KEY = os.getenv("FRED_API_KEY", "").strip()
 ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY", "").strip()
 
-USER_AGENT = "us-market-intel-dashboard/0.1 (personal research; contact: user-configured)"
+USER_AGENT = "us-market-intel-dashboard/0.2 (personal research; contact: user-configured)"
+
+ALPHA_CACHE: Dict[str, List[Dict[str, Any]]] = {}
+
+WATCHLIST_GROUPS = [
+    {
+        "id": "core_etfs",
+        "name": "大盘核心ETF",
+        "description": "判断大盘、科技成长和小盘风险偏好的基础框架。",
+        "items": [
+            {"symbol": "SPY", "name": "S&P 500 ETF", "category": "core"},
+            {"symbol": "QQQ", "name": "Nasdaq 100 ETF", "category": "core"},
+            {"symbol": "IWM", "name": "Russell 2000 ETF", "category": "small_cap"},
+            {"symbol": "SMH", "name": "Semiconductor ETF", "category": "ai_semis"},
+        ],
+    },
+    {
+        "id": "ai_semis",
+        "name": "AI / 半导体链",
+        "description": "用于观察AI主线、算力链和半导体风险偏好是否延续。",
+        "items": [
+            {"symbol": "NVDA", "name": "NVIDIA", "category": "ai_semis"},
+            {"symbol": "AMD", "name": "AMD", "category": "ai_semis"},
+            {"symbol": "AVGO", "name": "Broadcom", "category": "ai_semis"},
+        ],
+    },
+    {
+        "id": "high_beta",
+        "name": "高波动成长股",
+        "description": "对利率、VIX和市场情绪变化较敏感，适合观察风险偏好强弱。",
+        "items": [
+            {"symbol": "TSLA", "name": "Tesla", "category": "high_beta"},
+            {"symbol": "PLTR", "name": "Palantir", "category": "high_beta"},
+        ],
+    },
+    {
+        "id": "crypto_related",
+        "name": "加密相关股",
+        "description": "对美元流动性、纳指风险偏好和BTC波动更敏感。",
+        "items": [
+            {"symbol": "MSTR", "name": "MicroStrategy", "category": "crypto"},
+            {"symbol": "COIN", "name": "Coinbase", "category": "crypto"},
+        ],
+    },
+]
 
 
 def now_utc_iso() -> str:
@@ -60,51 +105,62 @@ def get_config() -> Dict[str, Any]:
         return yaml.safe_load(f)
 
 
-def fetch_fred_series(series_id: str, years: int = 5) -> List[Dict[str, Any]]:
-    """Fetch a FRED series using API if key exists; otherwise public CSV fallback."""
-    observation_start = (datetime.now(timezone.utc) - timedelta(days=365 * years)).date().isoformat()
-    if FRED_API_KEY:
-        url = "https://api.stlouisfed.org/fred/series/observations"
-        params = {
-            "series_id": series_id,
-            "api_key": FRED_API_KEY,
-            "file_type": "json",
-            "observation_start": observation_start,
-            "sort_order": "asc",
-        }
-        r = requests.get(url, params=params, headers={"User-Agent": USER_AGENT}, timeout=30)
-        r.raise_for_status()
-        rows = r.json().get("observations", [])
-        out = []
-        for row in rows:
-            val = safe_float(row.get("value"))
-            if val is not None:
-                out.append({"date": row.get("date"), "value": val})
-        return out
+def warn(message: str) -> None:
+    print(f"WARNING: {message}")
 
-    # Public FRED graph CSV fallback. Good for personal prototype; use API key in production.
-    url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
-    r = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=30)
-    r.raise_for_status()
-    lines = r.text.splitlines()
-    reader = csv.DictReader(lines)
-    cutoff = datetime.now(timezone.utc).date() - timedelta(days=365 * years)
-    out = []
-    for row in reader:
-        date_str = row.get("observation_date")
-        value_str = row.get(series_id)
-        if not date_str:
-            continue
-        try:
-            d = datetime.strptime(date_str, "%Y-%m-%d").date()
-        except ValueError:
-            continue
-        if d < cutoff:
-            continue
-        val = safe_float(value_str)
-        if val is not None:
-            out.append({"date": date_str, "value": val})
-    return out
+
+def fetch_fred_series(series_id: str, years: int = 5) -> List[Dict[str, Any]]:
+    """Fetch a FRED series using API if key exists; otherwise public CSV fallback.
+
+    V2 intentionally returns [] on per-series failures so that one unstable series
+    does not break the entire dashboard update.
+    """
+    observation_start = (datetime.now(timezone.utc) - timedelta(days=365 * years)).date().isoformat()
+    try:
+        if FRED_API_KEY:
+            url = "https://api.stlouisfed.org/fred/series/observations"
+            params = {
+                "series_id": series_id,
+                "api_key": FRED_API_KEY,
+                "file_type": "json",
+                "observation_start": observation_start,
+                "sort_order": "asc",
+            }
+            r = requests.get(url, params=params, headers={"User-Agent": USER_AGENT}, timeout=30)
+            r.raise_for_status()
+            rows = r.json().get("observations", [])
+            out = []
+            for row in rows:
+                val = safe_float(row.get("value"))
+                if val is not None:
+                    out.append({"date": row.get("date"), "value": val})
+            return out
+
+        url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
+        r = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=30)
+        r.raise_for_status()
+        lines = r.text.splitlines()
+        reader = csv.DictReader(lines)
+        cutoff = datetime.now(timezone.utc).date() - timedelta(days=365 * years)
+        out = []
+        for row in reader:
+            date_str = row.get("observation_date")
+            value_str = row.get(series_id)
+            if not date_str:
+                continue
+            try:
+                d = datetime.strptime(date_str, "%Y-%m-%d").date()
+            except ValueError:
+                continue
+            if d < cutoff:
+                continue
+            val = safe_float(value_str)
+            if val is not None:
+                out.append({"date": date_str, "value": val})
+        return out
+    except Exception as exc:
+        warn(f"FRED series failed: {series_id}: {exc}")
+        return []
 
 
 def latest_and_changes(points: List[Dict[str, Any]]) -> Tuple[Optional[float], Optional[str], Optional[float], Optional[float], Optional[float]]:
@@ -123,13 +179,21 @@ def latest_and_changes(points: List[Dict[str, Any]]) -> Tuple[Optional[float], O
     return v, d, chg1, chg5, chg20
 
 
+def pct_from_delta(value: Optional[float], delta: Optional[float]) -> Optional[float]:
+    if value is None or delta is None:
+        return None
+    prev = value - delta
+    if abs(prev) < 1e-9:
+        return None
+    return delta / prev * 100
+
+
 def yoy_from_points(points: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     if not points:
         return []
     df = pd.DataFrame(points)
     df["date"] = pd.to_datetime(df["date"])
     df = df.sort_values("date")
-    # monthly series: compare with 12 periods back; if weekly/daily this is not used.
     df["value"] = pd.to_numeric(df["value"], errors="coerce")
     df["yoy"] = (df["value"] / df["value"].shift(12) - 1) * 100
     df = df.dropna(subset=["yoy"])
@@ -149,52 +213,70 @@ def mom_from_points(points: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
 
 def fetch_alpha_vantage_daily(symbol: str) -> List[Dict[str, Any]]:
+    """Fetch daily close data from Alpha Vantage with in-run caching.
+
+    Uses TIME_SERIES_DAILY because it is broadly available in free API tiers.
+    If the API key is missing or rate-limited, return [] instead of failing.
+    """
+    symbol = symbol.upper().strip()
+    if symbol in ALPHA_CACHE:
+        return ALPHA_CACHE[symbol]
     if not ALPHA_VANTAGE_API_KEY:
+        ALPHA_CACHE[symbol] = []
         return []
+
     url = "https://www.alphavantage.co/query"
     params = {
-        "function": "TIME_SERIES_DAILY_ADJUSTED",
+        "function": "TIME_SERIES_DAILY",
         "symbol": symbol,
         "outputsize": "compact",
         "apikey": ALPHA_VANTAGE_API_KEY,
     }
-    r = requests.get(url, params=params, headers={"User-Agent": USER_AGENT}, timeout=30)
-    r.raise_for_status()
-    payload = r.json()
-    key = "Time Series (Daily)"
-    if key not in payload:
+    try:
+        r = requests.get(url, params=params, headers={"User-Agent": USER_AGENT}, timeout=30)
+        r.raise_for_status()
+        payload = r.json()
+        key = "Time Series (Daily)"
+        if key not in payload:
+            note = payload.get("Note") or payload.get("Information") or payload.get("Error Message") or str(payload)[:200]
+            warn(f"Alpha Vantage returned no daily data for {symbol}: {note}")
+            ALPHA_CACHE[symbol] = []
+            return []
+        out = []
+        for date_str, row in payload[key].items():
+            val = safe_float(row.get("4. close"))
+            if val is not None:
+                out.append({"date": date_str, "value": val})
+        out = sorted(out, key=lambda x: x["date"])
+        ALPHA_CACHE[symbol] = out
+        return out
+    except Exception as exc:
+        warn(f"Alpha Vantage symbol failed: {symbol}: {exc}")
+        ALPHA_CACHE[symbol] = []
         return []
-    out = []
-    for date_str, row in payload[key].items():
-        val = safe_float(row.get("5. adjusted close") or row.get("4. close"))
-        if val is not None:
-            out.append({"date": date_str, "value": val})
-    return sorted(out, key=lambda x: x["date"])
 
 
 def risk_score(indicator_id: str, value: Optional[float], chg5: Optional[float] = None) -> int:
-    """Heuristic V1 score: 0=benign, 100=high risk.
-    These thresholds are intentionally transparent and should be iterated after backtests.
-    """
+    """Heuristic score: 0=benign, 100=high risk."""
     if value is None:
         return 50
 
-    if indicator_id in {"dgs10"}:
+    if indicator_id == "dgs10":
         if value >= 4.70: return 85
         if value >= 4.40: return 70
         if value >= 4.10: return 55
         return 35
-    if indicator_id in {"dgs2"}:
+    if indicator_id == "dgs2":
         if value >= 4.50: return 80
         if value >= 4.10: return 65
         if value >= 3.70: return 50
         return 35
-    if indicator_id in {"dfii10"}:
+    if indicator_id == "dfii10":
         if value >= 2.30: return 85
         if value >= 2.00: return 70
         if value >= 1.70: return 55
         return 35
-    if indicator_id in {"t10yie"}:
+    if indicator_id == "t10yie":
         if value >= 2.60: return 80
         if value >= 2.40: return 65
         if value >= 2.20: return 50
@@ -216,7 +298,6 @@ def risk_score(indicator_id: str, value: Optional[float], chg5: Optional[float] 
         if value >= 210_000: return 45
         return 35
     if indicator_id == "payems_mom":
-        # Too weak is recession risk; too hot is rate risk. Middle is healthier.
         if value < 50: return 80
         if value < 100: return 65
         if value > 300: return 65
@@ -237,17 +318,22 @@ def risk_score(indicator_id: str, value: Optional[float], chg5: Optional[float] 
         if value >= 1.5: return 70
         if value >= 1.2: return 55
         return 35
-    if indicator_id in {"wti"}:
+    if indicator_id == "wti":
         if value >= 100: return 80
         if value >= 85: return 65
         if value >= 70: return 45
         return 35
     if indicator_id in {"spy", "qqq", "iwm", "smh", "rsp"}:
-        if chg5 is None: return 50
-        pct = chg5 / max(abs(value - chg5), 1e-9) * 100
-        if pct <= -5: return 80
-        if pct <= -2: return 65
-        if pct >= 3: return 35
+        pct5 = pct_from_delta(value, chg5)
+        if pct5 is None: return 50
+        if pct5 <= -5: return 80
+        if pct5 <= -2: return 65
+        if pct5 >= 3: return 35
+        return 45
+    if indicator_id == "walcl":
+        if chg5 is not None and chg5 < -50_000: return 65
+        return 40
+    if indicator_id == "rrp":
         return 45
     return 50
 
@@ -260,6 +346,120 @@ def status_from_score(score: float) -> str:
     return "green"
 
 
+def status_label(status: str) -> str:
+    return {"green": "绿色：可进攻", "yellow": "黄色：谨慎", "red": "红色：防守"}.get(status, status)
+
+
+def category_label(category: str) -> str:
+    labels = {
+        "core": "核心ETF",
+        "small_cap": "小盘风险偏好",
+        "ai_semis": "AI/半导体",
+        "high_beta": "高波动成长",
+        "crypto": "加密相关",
+    }
+    return labels.get(category, category)
+
+
+def stock_risk_score(category: str, pct5: Optional[float], pct20: Optional[float], macro_status: str, macro_score: float) -> int:
+    if macro_status == "red":
+        score = 72
+    elif macro_status == "yellow":
+        score = 55
+    else:
+        score = 38
+
+    if category in {"high_beta", "crypto"}:
+        score += 10 if macro_status == "yellow" else 18 if macro_status == "red" else 4
+    elif category in {"ai_semis", "small_cap"}:
+        score += 6 if macro_status in {"yellow", "red"} else 0
+
+    if pct5 is not None:
+        if pct5 <= -8:
+            score += 18
+        elif pct5 <= -5:
+            score += 12
+        elif pct5 >= 10 and category in {"high_beta", "crypto", "ai_semis"}:
+            score += 8
+
+    if pct20 is not None:
+        if pct20 <= -15:
+            score += 12
+        elif pct20 >= 25 and category in {"high_beta", "crypto"}:
+            score += 10
+
+    return int(max(20, min(95, round(score))))
+
+
+def build_stock_hint(symbol: str, category: str, status: str, pct5: Optional[float], macro_status: str) -> str:
+    if status == "red":
+        if category in {"crypto", "high_beta"}:
+            return "防守优先；不追高，等待VIX/利率压力回落后再评估。"
+        if category == "ai_semis":
+            return "AI主线仍可观察，但当前不适合无确认追涨。"
+        return "以观察为主，等待市场风险分回落。"
+
+    if status == "yellow":
+        if category == "crypto":
+            return "仓位要轻；重点看美元、纳指和BTC风险偏好。"
+        if category == "high_beta":
+            return "可以观察强弱，但要等回踩或放量确认。"
+        if category == "ai_semis":
+            return "主线股可继续跟踪，利率上行时避免追高。"
+        if category == "small_cap":
+            return "小盘对利率和信用环境敏感，暂不宜激进。"
+        return "维持观察，结合大盘方向决定。"
+
+    if pct5 is not None and pct5 >= 8 and category in {"crypto", "high_beta", "ai_semis"}:
+        return "风险偏好友好但短线涨幅较大，避免情绪化追高。"
+    if category == "ai_semis":
+        return "风险偏好较友好，可作为主线观察对象。"
+    if category == "crypto":
+        return "可观察，但波动大，仍需控制单票仓位。"
+    return "环境相对友好，可继续跟踪趋势。"
+
+
+def build_watchlist(macro_status: str, macro_score: float) -> Dict[str, Any]:
+    groups_out = []
+    for group in WATCHLIST_GROUPS:
+        items_out = []
+        for item in group["items"]:
+            symbol = item["symbol"]
+            points = fetch_alpha_vantage_daily(symbol)
+            value, date, chg1, chg5, chg20 = latest_and_changes(points)
+            pct1 = pct_from_delta(value, chg1)
+            pct5 = pct_from_delta(value, chg5)
+            pct20 = pct_from_delta(value, chg20)
+            score = stock_risk_score(item["category"], pct5, pct20, macro_status, macro_score) if value is not None else 50
+            status = status_from_score(score)
+            items_out.append({
+                "symbol": symbol,
+                "name": item["name"],
+                "category": item["category"],
+                "category_label": category_label(item["category"]),
+                "date": date,
+                "price": value,
+                "change_1_pct": pct1,
+                "change_5_pct": pct5,
+                "change_20_pct": pct20,
+                "risk_score": score,
+                "status": status,
+                "status_label": status_label(status),
+                "hint": build_stock_hint(symbol, item["category"], status, pct5, macro_status),
+            })
+        groups_out.append({
+            "id": group["id"],
+            "name": group["name"],
+            "description": group["description"],
+            "items": items_out,
+        })
+    return {
+        "provider": "Alpha Vantage daily close",
+        "note": "免费API请求数有限；V2仅做日线级观察池，不做实时交易报价。",
+        "groups": groups_out,
+    }
+
+
 def build_dashboard_payload() -> Dict[str, Any]:
     cfg = get_config()
     modules_out = []
@@ -268,8 +468,11 @@ def build_dashboard_payload() -> Dict[str, Any]:
     for module_id, module in cfg["modules"].items():
         indicators_out = []
         for ind in module.get("indicators", []):
-            points: List[Dict[str, Any]] = []
             source = ind.get("source")
+            if source == "derived":
+                continue
+
+            points: List[Dict[str, Any]] = []
             if source == "fred":
                 points = fetch_fred_series(ind["series"])
             elif source == "fred_yoy":
@@ -282,7 +485,8 @@ def build_dashboard_payload() -> Dict[str, Any]:
                 points = []
 
             value, date, chg1, chg5, chg20 = latest_and_changes(points)
-            item = {
+            score = risk_score(ind["id"], value, chg5)
+            item_out = {
                 "id": ind["id"],
                 "label": ind["label"],
                 "unit": ind.get("unit", ""),
@@ -292,19 +496,19 @@ def build_dashboard_payload() -> Dict[str, Any]:
                 "change_1": chg1,
                 "change_5": chg5,
                 "change_20": chg20,
-                "risk_score": risk_score(ind["id"], value, chg5),
-                "status": status_from_score(risk_score(ind["id"], value, chg5)),
+                "risk_score": score,
+                "status": status_from_score(score),
             }
-            indicators_out.append(item)
-            all_indicator_lookup[ind["id"]] = item
+            indicators_out.append(item_out)
+            all_indicator_lookup[ind["id"]] = item_out
 
-        # Derived fields after base fetch.
         if module_id == "rates":
             dgs10 = all_indicator_lookup.get("dgs10", {}).get("value")
             dgs2 = all_indicator_lookup.get("dgs2", {}).get("value")
             if dgs10 is not None and dgs2 is not None:
                 curve_bp = (dgs10 - dgs2) * 100
-                item = {
+                curve_score = 50 if curve_bp > -50 else 65
+                item_out = {
                     "id": "curve_10y2y",
                     "label": "10Y-2Y Curve",
                     "unit": "bp",
@@ -314,11 +518,11 @@ def build_dashboard_payload() -> Dict[str, Any]:
                     "change_1": None,
                     "change_5": None,
                     "change_20": None,
-                    "risk_score": 50 if curve_bp > -50 else 65,
-                    "status": "yellow" if curve_bp < -50 else "green",
+                    "risk_score": curve_score,
+                    "status": status_from_score(curve_score),
                 }
-                indicators_out.append(item)
-                all_indicator_lookup["curve_10y2y"] = item
+                indicators_out.append(item_out)
+                all_indicator_lookup["curve_10y2y"] = item_out
 
         valid_scores = [x["risk_score"] for x in indicators_out if x.get("value") is not None or x.get("source") == "derived"]
         module_score = round(sum(valid_scores) / len(valid_scores), 1) if valid_scores else 50.0
@@ -349,21 +553,25 @@ def build_dashboard_payload() -> Dict[str, Any]:
                 })
     top_risks = sorted(top_risks, key=lambda x: x["score"], reverse=True)[:6]
 
+    watchlist = build_watchlist(overall_status, weighted_score)
+
     payload = {
         "generated_at": now_utc_iso(),
-        "version": "v1.0",
+        "version": "v2.0",
         "overall": {
             "score": round(weighted_score, 1),
             "status": overall_status,
-            "status_label": {"green": "绿色：可进攻", "yellow": "黄色：谨慎", "red": "红色：防守"}[overall_status],
+            "status_label": status_label(overall_status),
             "summary": build_summary(overall_status, top_risks),
         },
         "modules": modules_out,
         "top_risks": top_risks,
+        "watchlist": watchlist,
         "notes": [
             "This is a rules-based market intelligence dashboard, not investment advice.",
-            "ETF/stock quote fields require ALPHA_VANTAGE_API_KEY or another licensed market-data provider.",
-            "FRED_API_KEY is recommended for production reliability, although a public CSV fallback is included for personal prototyping.",
+            "V2 watchlist uses Alpha Vantage daily close data when ALPHA_VANTAGE_API_KEY is configured.",
+            "Free market-data APIs are suitable for daily monitoring, not real-time trading execution.",
+            "FRED series failures are skipped instead of breaking the whole daily update.",
         ],
     }
     return payload

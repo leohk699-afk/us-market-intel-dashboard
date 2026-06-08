@@ -27,7 +27,7 @@ body {
 h1 { margin: 0; font-size: 28px; letter-spacing: .5px; }
 .subtitle { margin: 8px 0 0; color: var(--muted); }
 .timestamp { color: var(--muted); font-size: 14px; text-align: right; }
-main { width: min(1280px, 94vw); margin: 28px auto 60px; }
+main { width: min(1320px, 94vw); margin: 28px auto 60px; }
 .hero {
   background: linear-gradient(135deg, rgba(23,33,58,.96), rgba(18,26,47,.86));
   border: 1px solid var(--line);
@@ -56,7 +56,7 @@ main { width: min(1280px, 94vw); margin: 28px auto 60px; }
 .hero p { color: #d9e3f7; font-size: 18px; line-height: 1.65; margin: 0; }
 .grid { display: grid; gap: 20px; margin-top: 22px; }
 .grid.two { grid-template-columns: 1.15fr .85fr; }
-.card, .module-card, .table-wrap {
+.card, .module-card, .table-wrap, .watchlist-card {
   background: rgba(18,26,47,.86);
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -64,6 +64,7 @@ main { width: min(1280px, 94vw); margin: 28px auto 60px; }
 }
 .card h2, .section-title { margin: 0 0 16px; font-size: 20px; }
 .notes { color: var(--muted); line-height: 1.8; margin: 0; padding-left: 18px; }
+.muted { color: var(--muted); }
 .risk-list { display: grid; gap: 10px; }
 .risk-item {
   display: flex;
@@ -78,6 +79,9 @@ main { width: min(1280px, 94vw); margin: 28px auto 60px; }
 .risk-item .meta { color: var(--muted); font-size: 13px; margin-top: 4px; }
 .risk-item .risk-score { font-weight: 900; }
 .section-title { margin-top: 32px; }
+.section-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-top: 32px; }
+.section-head .section-title { margin-top: 0; }
+.section-note { color: var(--muted); font-size: 13px; text-align: right; max-width: 640px; }
 .modules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
 .module-card { padding: 20px; }
 .module-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
@@ -89,19 +93,30 @@ main { width: min(1280px, 94vw); margin: 28px auto 60px; }
 .bar-inner.yellow { background: var(--yellow); }
 .bar-inner.red { background: var(--red); }
 .module-meta { color: var(--muted); font-size: 13px; }
-.table-wrap { padding: 0; overflow: hidden; }
-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-th, td { padding: 14px 16px; border-bottom: 1px solid var(--line); text-align: left; }
+.watchlist-groups { display: grid; gap: 18px; }
+.watchlist-card { padding: 0; overflow: hidden; }
+.watchlist-head { padding: 18px 22px; border-bottom: 1px solid var(--line); }
+.watchlist-head h3 { margin: 0; font-size: 18px; }
+.watchlist-head p { margin: 6px 0 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.table-wrap { padding: 0; overflow: auto; }
+.inner-table { border: none; border-radius: 0; background: transparent; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 920px; }
+th, td { padding: 14px 16px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
 th { color: var(--muted); font-weight: 700; background: rgba(255,255,255,.03); }
 td { color: #e7efff; }
-.badge { padding: 4px 8px; border-radius: 999px; font-size: 12px; font-weight: 800; }
+.subtext { color: var(--muted); font-size: 12px; margin-top: 4px; }
+.hint-cell { color: #d9e3f7; min-width: 220px; line-height: 1.5; }
+.pos { color: var(--green); font-weight: 700; }
+.neg { color: var(--red); font-weight: 700; }
+.badge { padding: 4px 8px; border-radius: 999px; font-size: 12px; font-weight: 800; white-space: nowrap; }
 .badge.green { color: var(--green); background: rgba(44,195,107,.14); }
 .badge.yellow { color: var(--yellow); background: rgba(255,189,61,.14); }
 .badge.red { color: var(--red); background: rgba(255,95,95,.14); }
-footer { width: min(1280px, 94vw); margin: 0 auto 30px; color: var(--muted); font-size: 13px; }
+footer { width: min(1320px, 94vw); margin: 0 auto 30px; color: var(--muted); font-size: 13px; }
 @media (max-width: 900px) {
   .topbar, .hero { grid-template-columns: 1fr; display: grid; }
   .grid.two, .modules { grid-template-columns: 1fr; }
   .hero { gap: 18px; }
-  .timestamp { text-align: left; }
+  .timestamp, .section-note { text-align: left; }
+  .section-head { display: block; }
 }

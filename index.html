@@ -10,7 +10,7 @@
   <header class="topbar">
     <div>
       <h1>美股宏观情报员</h1>
-      <p class="subtitle">Rates · Inflation · Volatility · Credit · Market Structure · Commodities</p>
+      <p class="subtitle">Rates · Inflation · Volatility · Credit · Market Structure · Commodities · Watchlist</p>
     </div>
     <div class="timestamp" id="generatedAt">更新中...</div>
   </header>
@@ -36,6 +36,7 @@
           <li>绿色：风险偏好较友好，可以寻找机会。</li>
           <li>黄色：可交易但不宜重仓追高，等待确认。</li>
           <li>红色：防守优先，降低高波动仓位。</li>
+          <li>个股观察池使用日线收盘数据，不是实时交易报价。</li>
           <li>本系统是信息聚合与风险监测，不是投资建议。</li>
         </ul>
       </div>
@@ -44,6 +45,14 @@
     <section>
       <h2 class="section-title">模块雷达</h2>
       <div class="modules" id="modules"></div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2 class="section-title">个股观察池</h2>
+        <span class="section-note" id="watchlistProvider">等待行情数据...</span>
+      </div>
+      <div class="watchlist-groups" id="watchlistGroups"></div>
     </section>
 
     <section>
@@ -69,7 +78,7 @@
   </main>
 
   <footer>
-    <span>V1 dashboard · 数据每日自动更新 · 可迭代指标注册表：config/indicators.yml</span>
+    <span>V2 dashboard · 数据每日自动更新 · 宏观雷达 + 个股观察池 · 配置：config/indicators.yml</span>
   </footer>
 
   <script src="assets/app.js"></script>

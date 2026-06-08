@@ -1,6 +1,6 @@
-# V1 indicator registry for US Market Intelligence Dashboard
+# V2 indicator registry for US Market Intelligence Dashboard
 # weight: contribution to total score; positive_is_risk: true means higher value usually increases risk.
-# Most macro series use FRED. Equity/ETF quote data is optional and can be added via Alpha Vantage or another licensed market-data provider.
+# Most macro series use FRED. ETF/stock quote data uses Alpha Vantage when ALPHA_VANTAGE_API_KEY is configured.
 
 modules:
   rates:
@@ -136,7 +136,7 @@ modules:
         positive_is_risk: conditional
       - id: dxy
         label: DXY Dollar Index
-        source: market_data_provider
+        source: manual_or_provider
         unit: ""
         positive_is_risk: true
 
@@ -192,12 +192,11 @@ modules:
         positive_is_risk: conditional
       - id: silver
         label: Silver Price
-        source: market_data_provider
+        source: manual_or_provider
         unit: "USD/oz"
         positive_is_risk: conditional
       - id: gold_silver_ratio
         label: Gold/Silver Ratio
-        source: derived
-        formula: gold / silver
+        source: manual_or_provider
         unit: "x"
         positive_is_risk: true
