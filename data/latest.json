@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-06-08T13:13:16+00:00",
-  "version": "v2.0",
+  "generated_at": "2026-06-08T13:23:11+00:00",
+  "version": "v2.1",
   "overall": {
     "score": 54.2,
     "status": "yellow",
@@ -495,9 +495,9 @@
     "note": "免费API请求数有限；V2仅做日线级观察池，不做实时交易报价。",
     "groups": [
       {
-        "id": "core_etfs",
-        "name": "大盘核心ETF",
-        "description": "判断大盘、科技成长和小盘风险偏好的基础框架。",
+        "id": "core_indices",
+        "name": "核心指数 / ETF",
+        "description": "保留少数关键指数，用于判断大盘、科技成长、小盘和半导体主线环境。",
         "items": [
           {
             "symbol": "SPY",
@@ -558,17 +558,32 @@
             "status": "yellow",
             "status_label": "黄色：谨慎",
             "hint": "主线股可继续跟踪，利率上行时避免追高。"
+          },
+          {
+            "symbol": "RSP",
+            "name": "Equal Weight S&P 500 ETF",
+            "category": "core",
+            "category_label": "核心ETF",
+            "date": null,
+            "price": null,
+            "change_1_pct": null,
+            "change_5_pct": null,
+            "change_20_pct": null,
+            "risk_score": 50,
+            "status": "yellow",
+            "status_label": "黄色：谨慎",
+            "hint": "维持观察，结合大盘方向决定。"
           }
         ]
       },
       {
-        "id": "ai_semis",
-        "name": "AI / 半导体链",
-        "description": "用于观察AI主线、算力链和半导体风险偏好是否延续。",
+        "id": "focused_stocks",
+        "name": "重点个股",
+        "description": "按你的要求仅保留 MU、AMD、RDW、MRVL 四只个股，减少噪音并节省免费 API 请求额度。",
         "items": [
           {
-            "symbol": "NVDA",
-            "name": "NVIDIA",
+            "symbol": "MU",
+            "name": "Micron Technology",
             "category": "ai_semis",
             "category_label": "AI/半导体",
             "date": null,
@@ -597,8 +612,23 @@
             "hint": "主线股可继续跟踪，利率上行时避免追高。"
           },
           {
-            "symbol": "AVGO",
-            "name": "Broadcom",
+            "symbol": "RDW",
+            "name": "Redwire",
+            "category": "high_beta",
+            "category_label": "高波动成长",
+            "date": null,
+            "price": null,
+            "change_1_pct": null,
+            "change_5_pct": null,
+            "change_20_pct": null,
+            "risk_score": 50,
+            "status": "yellow",
+            "status_label": "黄色：谨慎",
+            "hint": "可以观察强弱，但要等回踩或放量确认。"
+          },
+          {
+            "symbol": "MRVL",
+            "name": "Marvell Technology",
             "category": "ai_semis",
             "category_label": "AI/半导体",
             "date": null,
@@ -612,86 +642,12 @@
             "hint": "主线股可继续跟踪，利率上行时避免追高。"
           }
         ]
-      },
-      {
-        "id": "high_beta",
-        "name": "高波动成长股",
-        "description": "对利率、VIX和市场情绪变化较敏感，适合观察风险偏好强弱。",
-        "items": [
-          {
-            "symbol": "TSLA",
-            "name": "Tesla",
-            "category": "high_beta",
-            "category_label": "高波动成长",
-            "date": null,
-            "price": null,
-            "change_1_pct": null,
-            "change_5_pct": null,
-            "change_20_pct": null,
-            "risk_score": 50,
-            "status": "yellow",
-            "status_label": "黄色：谨慎",
-            "hint": "可以观察强弱，但要等回踩或放量确认。"
-          },
-          {
-            "symbol": "PLTR",
-            "name": "Palantir",
-            "category": "high_beta",
-            "category_label": "高波动成长",
-            "date": null,
-            "price": null,
-            "change_1_pct": null,
-            "change_5_pct": null,
-            "change_20_pct": null,
-            "risk_score": 50,
-            "status": "yellow",
-            "status_label": "黄色：谨慎",
-            "hint": "可以观察强弱，但要等回踩或放量确认。"
-          }
-        ]
-      },
-      {
-        "id": "crypto_related",
-        "name": "加密相关股",
-        "description": "对美元流动性、纳指风险偏好和BTC波动更敏感。",
-        "items": [
-          {
-            "symbol": "MSTR",
-            "name": "MicroStrategy",
-            "category": "crypto",
-            "category_label": "加密相关",
-            "date": null,
-            "price": null,
-            "change_1_pct": null,
-            "change_5_pct": null,
-            "change_20_pct": null,
-            "risk_score": 50,
-            "status": "yellow",
-            "status_label": "黄色：谨慎",
-            "hint": "仓位要轻；重点看美元、纳指和BTC风险偏好。"
-          },
-          {
-            "symbol": "COIN",
-            "name": "Coinbase",
-            "category": "crypto",
-            "category_label": "加密相关",
-            "date": null,
-            "price": null,
-            "change_1_pct": null,
-            "change_5_pct": null,
-            "change_20_pct": null,
-            "risk_score": 50,
-            "status": "yellow",
-            "status_label": "黄色：谨慎",
-            "hint": "仓位要轻；重点看美元、纳指和BTC风险偏好。"
-          }
-        ]
       }
     ]
   },
   "notes": [
     "This is a rules-based market intelligence dashboard, not investment advice.",
-    "V2 watchlist uses Alpha Vantage daily close data when ALPHA_VANTAGE_API_KEY is configured.",
+    "V2.1 watchlist keeps core ETFs plus MU, AMD, RDW, and MRVL only.",
     "Free market-data APIs are suitable for daily monitoring, not real-time trading execution.",
     "FRED series failures are skipped instead of breaking the whole daily update."
   ]
