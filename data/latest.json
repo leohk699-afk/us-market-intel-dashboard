@@ -1,72 +1,511 @@
 {
-  "generated_at": "2026-06-08T13:05:00+00:00",
-  "version": "v1.0-sample",
+  "generated_at": "2026-06-08T12:22:13+00:00",
+  "version": "v1.0",
   "overall": {
-    "score": 57.8,
+    "score": 51.8,
     "status": "yellow",
     "status_label": "黄色：谨慎",
-    "summary": "市场处于黄色谨慎状态。当前主要压力来自：10Y Treasury Yield、VIX、Core CPI YoY。可以交易，但应等待确认并控制仓位。"
+    "summary": "市场处于黄色谨慎状态。当前主要压力来自：CPI YoY、PCE YoY、Core PCE YoY。 可以交易，但应等待确认并控制仓位。"
   },
-  "top_risks": [
-    {"module": "利率与美债", "id": "dgs10", "label": "10Y Treasury Yield", "value": 4.47, "unit": "%", "score": 70},
-    {"module": "波动率与风险偏好", "id": "vixcls", "label": "VIX", "value": 20.1, "unit": "", "score": 65},
-    {"module": "通胀与就业", "id": "cpilfesl_yoy", "label": "Core CPI YoY", "value": 2.8, "unit": "%", "score": 60}
-  ],
   "modules": [
     {
-      "id": "rates", "name": "利率与美债", "weight": 25, "score": 63.3, "status": "yellow",
+      "id": "rates",
+      "name": "利率与美债",
+      "weight": 25,
+      "score": 56.7,
+      "status": "yellow",
       "indicators": [
-        {"id":"dgs2","label":"2Y Treasury Yield","unit":"%","source":"fred","date":"2026-06-04","value":4.05,"change_1":0.02,"change_5":0.08,"change_20":0.11,"risk_score":55,"status":"yellow"},
-        {"id":"dgs10","label":"10Y Treasury Yield","unit":"%","source":"fred","date":"2026-06-04","value":4.47,"change_1":0.04,"change_5":0.10,"change_20":0.15,"risk_score":70,"status":"yellow"},
-        {"id":"dfii10","label":"10Y Real Yield","unit":"%","source":"fred","date":"2026-06-04","value":2.08,"change_1":0.03,"change_5":0.07,"change_20":0.09,"risk_score":70,"status":"red"},
-        {"id":"t10yie","label":"10Y Breakeven Inflation","unit":"%","source":"fred","date":"2026-06-05","value":2.36,"change_1":0.01,"change_5":0.03,"change_20":0.05,"risk_score":50,"status":"yellow"},
-        {"id":"curve_10y2y","label":"10Y-2Y Curve","unit":"bp","source":"derived","date":"2026-06-04","value":42.0,"change_1":null,"change_5":null,"change_20":null,"risk_score":50,"status":"green"}
+        {
+          "id": "dgs2",
+          "label": "2Y Treasury Yield",
+          "unit": "%",
+          "source": "fred",
+          "date": "2026-06-04",
+          "value": 4.05,
+          "change_1": -0.03000000000000025,
+          "change_5": 0.05999999999999961,
+          "change_20": 0.17999999999999972,
+          "risk_score": 50,
+          "status": "yellow"
+        },
+        {
+          "id": "dgs10",
+          "label": "10Y Treasury Yield",
+          "unit": "%",
+          "source": "fred",
+          "date": "2026-06-04",
+          "value": 4.47,
+          "change_1": -0.020000000000000462,
+          "change_5": 0.019999999999999574,
+          "change_20": 0.10999999999999943,
+          "risk_score": 70,
+          "status": "red"
+        },
+        {
+          "id": "dfii10",
+          "label": "10Y Real Yield",
+          "unit": "%",
+          "source": "fred",
+          "date": "2026-06-04",
+          "value": 2.11,
+          "change_1": 0.0,
+          "change_5": 0.04999999999999982,
+          "change_20": 0.16999999999999993,
+          "risk_score": 70,
+          "status": "red"
+        },
+        {
+          "id": "t10yie",
+          "label": "10Y Breakeven Inflation",
+          "unit": "%",
+          "source": "fred",
+          "date": "2026-06-05",
+          "value": 2.36,
+          "change_1": 0.0,
+          "change_5": -0.020000000000000018,
+          "change_20": -0.0900000000000003,
+          "risk_score": 50,
+          "status": "yellow"
+        },
+        {
+          "id": "curve_10y2y",
+          "label": "10Y-2Y Curve",
+          "unit": "bp",
+          "source": "derived",
+          "date": null,
+          "value": null,
+          "change_1": null,
+          "change_5": null,
+          "change_20": null,
+          "risk_score": 50,
+          "status": "yellow"
+        },
+        {
+          "id": "curve_10y2y",
+          "label": "10Y-2Y Curve",
+          "unit": "bp",
+          "source": "derived",
+          "date": "2026-06-04",
+          "value": 41.99999999999999,
+          "change_1": null,
+          "change_5": null,
+          "change_20": null,
+          "risk_score": 50,
+          "status": "green"
+        }
       ]
     },
     {
-      "id": "inflation_jobs", "name": "通胀与就业", "weight": 20, "score": 57.9, "status": "yellow",
+      "id": "inflation_jobs",
+      "name": "通胀与就业",
+      "weight": 20,
+      "score": 59.3,
+      "status": "yellow",
       "indicators": [
-        {"id":"cpiaucsl_yoy","label":"CPI YoY","unit":"%","source":"fred_yoy","date":"2026-04-01","value":3.8,"change_1":0.1,"change_5":0.4,"change_20":null,"risk_score":75,"status":"red"},
-        {"id":"cpilfesl_yoy","label":"Core CPI YoY","unit":"%","source":"fred_yoy","date":"2026-04-01","value":2.8,"change_1":0.0,"change_5":-0.2,"change_20":null,"risk_score":60,"status":"yellow"},
-        {"id":"unrate","label":"Unemployment Rate","unit":"%","source":"fred","date":"2026-05-01","value":4.3,"change_1":0.0,"change_5":0.1,"change_20":null,"risk_score":45,"status":"green"},
-        {"id":"icsa","label":"Initial Jobless Claims","unit":"claims","source":"fred","date":"2026-05-30","value":225000,"change_1":13000,"change_5":9000,"change_20":null,"risk_score":45,"status":"green"},
-        {"id":"payems_mom","label":"Nonfarm Payrolls MoM","unit":"k","source":"fred_mom","date":"2026-05-01","value":172,"change_1":-8,"change_5":-30,"change_20":null,"risk_score":40,"status":"green"}
+        {
+          "id": "cpiaucsl_yoy",
+          "label": "CPI YoY",
+          "unit": "%",
+          "source": "fred_yoy",
+          "date": "2026-04-01",
+          "value": 3.9470269087042764,
+          "change_1": 0.6268213274805978,
+          "change_5": 0.9587272803407654,
+          "change_20": 1.005551115145975,
+          "risk_score": 75,
+          "status": "red"
+        },
+        {
+          "id": "cpilfesl_yoy",
+          "label": "Core CPI YoY",
+          "unit": "%",
+          "source": "fred_yoy",
+          "date": "2026-04-01",
+          "value": 2.9884245755166017,
+          "change_1": 0.3153260856636031,
+          "change_5": 0.09408116440607905,
+          "change_20": -0.24176703504787955,
+          "risk_score": 60,
+          "status": "yellow"
+        },
+        {
+          "id": "pcepi_yoy",
+          "label": "PCE YoY",
+          "unit": "%",
+          "source": "fred_yoy",
+          "date": "2026-04-01",
+          "value": 3.7669441141498172,
+          "change_1": 0.24148377954869016,
+          "change_5": 0.9467542828798248,
+          "change_20": 1.353949156722356,
+          "risk_score": 75,
+          "status": "red"
+        },
+        {
+          "id": "pcepilfe_yoy",
+          "label": "Core PCE YoY",
+          "unit": "%",
+          "source": "fred_yoy",
+          "date": "2026-04-01",
+          "value": 3.289190610508208,
+          "change_1": 0.05290332016039123,
+          "change_5": 0.46009782400913135,
+          "change_20": 0.415910693389665,
+          "risk_score": 75,
+          "status": "red"
+        },
+        {
+          "id": "unrate",
+          "label": "Unemployment Rate",
+          "unit": "%",
+          "source": "fred",
+          "date": "2026-05-01",
+          "value": 4.3,
+          "change_1": 0.0,
+          "change_5": -0.10000000000000053,
+          "change_20": 0.09999999999999964,
+          "risk_score": 45,
+          "status": "green"
+        },
+        {
+          "id": "icsa",
+          "label": "Initial Jobless Claims",
+          "unit": "claims",
+          "source": "fred",
+          "date": "2026-05-30",
+          "value": 225000.0,
+          "change_1": 13000.0,
+          "change_5": 35000.0,
+          "change_20": 24000.0,
+          "risk_score": 45,
+          "status": "green"
+        },
+        {
+          "id": "payems_mom",
+          "label": "Nonfarm Payrolls MoM",
+          "unit": "k",
+          "source": "fred_mom",
+          "date": "2026-05-01",
+          "value": 172.0,
+          "change_1": -7.0,
+          "change_5": 189.0,
+          "change_20": 17.0,
+          "risk_score": 40,
+          "status": "green"
+        }
       ]
     },
     {
-      "id": "volatility", "name": "波动率与风险偏好", "weight": 20, "score": 65.0, "status": "yellow",
+      "id": "volatility",
+      "name": "波动率与风险偏好",
+      "weight": 20,
+      "score": 45.0,
+      "status": "green",
       "indicators": [
-        {"id":"vixcls","label":"VIX","unit":"","source":"fred","date":"2026-06-05","value":20.1,"change_1":1.2,"change_5":2.4,"change_20":3.1,"risk_score":65,"status":"yellow"},
-        {"id":"move","label":"MOVE Index","unit":"","source":"manual_or_provider","date":null,"value":null,"change_1":null,"change_5":null,"change_20":null,"risk_score":50,"status":"yellow"}
+        {
+          "id": "vixcls",
+          "label": "VIX",
+          "unit": "",
+          "source": "fred",
+          "date": "2026-06-04",
+          "value": 15.4,
+          "change_1": -0.6599999999999984,
+          "change_5": -0.33999999999999986,
+          "change_20": -1.679999999999998,
+          "risk_score": 45,
+          "status": "green"
+        },
+        {
+          "id": "move",
+          "label": "MOVE Index",
+          "unit": "",
+          "source": "manual_or_provider",
+          "date": null,
+          "value": null,
+          "change_1": null,
+          "change_5": null,
+          "change_20": null,
+          "risk_score": 50,
+          "status": "yellow"
+        },
+        {
+          "id": "put_call",
+          "label": "Put/Call Ratio",
+          "unit": "",
+          "source": "manual_or_provider",
+          "date": null,
+          "value": null,
+          "change_1": null,
+          "change_5": null,
+          "change_20": null,
+          "risk_score": 50,
+          "status": "yellow"
+        }
       ]
     },
     {
-      "id": "credit_liquidity", "name": "信用与流动性", "weight": 15, "score": 42.5, "status": "green",
+      "id": "credit_liquidity",
+      "name": "信用与流动性",
+      "weight": 15,
+      "score": 42.5,
+      "status": "green",
       "indicators": [
-        {"id":"hy_oas","label":"High Yield OAS","unit":"%","source":"fred","date":"2026-06-04","value":2.74,"change_1":0.02,"change_5":0.05,"change_20":0.10,"risk_score":35,"status":"green"},
-        {"id":"ig_oas","label":"Investment Grade OAS","unit":"%","source":"fred","date":"2026-06-04","value":0.98,"change_1":0.01,"change_5":0.02,"change_20":0.03,"risk_score":35,"status":"green"},
-        {"id":"dxy","label":"DXY Dollar Index","unit":"","source":"market_data_provider","date":null,"value":null,"change_1":null,"change_5":null,"change_20":null,"risk_score":50,"status":"yellow"}
+        {
+          "id": "hy_oas",
+          "label": "High Yield OAS",
+          "unit": "%",
+          "source": "fred",
+          "date": "2026-06-04",
+          "value": 2.74,
+          "change_1": -0.009999999999999787,
+          "change_5": 0.020000000000000018,
+          "change_20": -0.06999999999999984,
+          "risk_score": 35,
+          "status": "green"
+        },
+        {
+          "id": "ig_oas",
+          "label": "Investment Grade OAS",
+          "unit": "%",
+          "source": "fred",
+          "date": "2026-06-04",
+          "value": 0.74,
+          "change_1": 0.0,
+          "change_5": 0.010000000000000009,
+          "change_20": -0.050000000000000044,
+          "risk_score": 35,
+          "status": "green"
+        },
+        {
+          "id": "walcl",
+          "label": "Fed Balance Sheet",
+          "unit": "USD mn",
+          "source": "fred",
+          "date": "2026-06-03",
+          "value": 6711495.0,
+          "change_1": 7112.0,
+          "change_5": 11545.0,
+          "change_20": 129795.0,
+          "risk_score": 50,
+          "status": "yellow"
+        },
+        {
+          "id": "rrp",
+          "label": "Overnight Reverse Repo",
+          "unit": "USD bn",
+          "source": "fred",
+          "date": "2026-06-05",
+          "value": 0.761,
+          "change_1": -0.3610000000000001,
+          "change_5": -10.916,
+          "change_20": -0.01200000000000001,
+          "risk_score": 50,
+          "status": "yellow"
+        },
+        {
+          "id": "dxy",
+          "label": "DXY Dollar Index",
+          "unit": "",
+          "source": "market_data_provider",
+          "date": null,
+          "value": null,
+          "change_1": null,
+          "change_5": null,
+          "change_20": null,
+          "risk_score": 50,
+          "status": "yellow"
+        }
       ]
     },
     {
-      "id": "market_structure", "name": "美股内部结构", "weight": 15, "score": 50.0, "status": "yellow",
+      "id": "market_structure",
+      "name": "美股内部结构",
+      "weight": 15,
+      "score": 50.0,
+      "status": "yellow",
       "indicators": [
-        {"id":"spy","label":"SPY","unit":"USD","source":"market_data_provider","date":null,"value":null,"change_1":null,"change_5":null,"change_20":null,"risk_score":50,"status":"yellow"},
-        {"id":"qqq","label":"QQQ","unit":"USD","source":"market_data_provider","date":null,"value":null,"change_1":null,"change_5":null,"change_20":null,"risk_score":50,"status":"yellow"},
-        {"id":"smh","label":"SMH Semiconductor ETF","unit":"USD","source":"market_data_provider","date":null,"value":null,"change_1":null,"change_5":null,"change_20":null,"risk_score":50,"status":"yellow"}
+        {
+          "id": "spy",
+          "label": "SPY",
+          "unit": "USD",
+          "source": "market_data_provider",
+          "date": null,
+          "value": null,
+          "change_1": null,
+          "change_5": null,
+          "change_20": null,
+          "risk_score": 50,
+          "status": "yellow"
+        },
+        {
+          "id": "qqq",
+          "label": "QQQ",
+          "unit": "USD",
+          "source": "market_data_provider",
+          "date": null,
+          "value": null,
+          "change_1": null,
+          "change_5": null,
+          "change_20": null,
+          "risk_score": 50,
+          "status": "yellow"
+        },
+        {
+          "id": "iwm",
+          "label": "IWM",
+          "unit": "USD",
+          "source": "market_data_provider",
+          "date": null,
+          "value": null,
+          "change_1": null,
+          "change_5": null,
+          "change_20": null,
+          "risk_score": 50,
+          "status": "yellow"
+        },
+        {
+          "id": "smh",
+          "label": "SMH Semiconductor ETF",
+          "unit": "USD",
+          "source": "market_data_provider",
+          "date": null,
+          "value": null,
+          "change_1": null,
+          "change_5": null,
+          "change_20": null,
+          "risk_score": 50,
+          "status": "yellow"
+        },
+        {
+          "id": "rsp",
+          "label": "RSP Equal Weight S&P 500",
+          "unit": "USD",
+          "source": "market_data_provider",
+          "date": null,
+          "value": null,
+          "change_1": null,
+          "change_5": null,
+          "change_20": null,
+          "risk_score": 50,
+          "status": "yellow"
+        }
       ]
     },
     {
-      "id": "commodities", "name": "商品与避险", "weight": 5, "score": 45.0, "status": "green",
+      "id": "commodities",
+      "name": "商品与避险",
+      "weight": 5,
+      "score": 57.5,
+      "status": "yellow",
       "indicators": [
-        {"id":"wti","label":"WTI Crude Oil","unit":"USD/bbl","source":"fred","date":"2026-06-04","value":71.2,"change_1":0.8,"change_5":2.1,"change_20":4.0,"risk_score":45,"status":"green"},
-        {"id":"gold","label":"Gold Price","unit":"USD/oz","source":"fred","date":"2026-06-04","value":4288.0,"change_1":-15.0,"change_5":40.0,"change_20":90.0,"risk_score":50,"status":"yellow"}
+        {
+          "id": "wti",
+          "label": "WTI Crude Oil",
+          "unit": "USD/bbl",
+          "source": "fred",
+          "date": "2026-06-01",
+          "value": 95.96,
+          "change_1": 4.799999999999997,
+          "change_5": -4.390000000000001,
+          "change_20": -9.420000000000002,
+          "risk_score": 65,
+          "status": "yellow"
+        },
+        {
+          "id": "gold",
+          "label": "Gold Price",
+          "unit": "USD/oz",
+          "source": "manual_or_provider",
+          "date": null,
+          "value": null,
+          "change_1": null,
+          "change_5": null,
+          "change_20": null,
+          "risk_score": 50,
+          "status": "yellow"
+        },
+        {
+          "id": "silver",
+          "label": "Silver Price",
+          "unit": "USD/oz",
+          "source": "market_data_provider",
+          "date": null,
+          "value": null,
+          "change_1": null,
+          "change_5": null,
+          "change_20": null,
+          "risk_score": 50,
+          "status": "yellow"
+        },
+        {
+          "id": "gold_silver_ratio",
+          "label": "Gold/Silver Ratio",
+          "unit": "x",
+          "source": "derived",
+          "date": null,
+          "value": null,
+          "change_1": null,
+          "change_5": null,
+          "change_20": null,
+          "risk_score": 50,
+          "status": "yellow"
+        }
       ]
     }
   ],
+  "top_risks": [
+    {
+      "module": "通胀与就业",
+      "id": "cpiaucsl_yoy",
+      "label": "CPI YoY",
+      "value": 3.9470269087042764,
+      "unit": "%",
+      "score": 75
+    },
+    {
+      "module": "通胀与就业",
+      "id": "pcepi_yoy",
+      "label": "PCE YoY",
+      "value": 3.7669441141498172,
+      "unit": "%",
+      "score": 75
+    },
+    {
+      "module": "通胀与就业",
+      "id": "pcepilfe_yoy",
+      "label": "Core PCE YoY",
+      "value": 3.289190610508208,
+      "unit": "%",
+      "score": 75
+    },
+    {
+      "module": "利率与美债",
+      "id": "dgs10",
+      "label": "10Y Treasury Yield",
+      "value": 4.47,
+      "unit": "%",
+      "score": 70
+    },
+    {
+      "module": "利率与美债",
+      "id": "dfii10",
+      "label": "10Y Real Yield",
+      "value": 2.11,
+      "unit": "%",
+      "score": 70
+    },
+    {
+      "module": "商品与避险",
+      "id": "wti",
+      "label": "WTI Crude Oil",
+      "value": 95.96,
+      "unit": "USD/bbl",
+      "score": 65
+    }
+  ],
   "notes": [
-    "This is sample data for front-end preview.",
-    "Run scripts/fetch_data.py to generate real data/latest.json.",
-    "Market quote fields require ALPHA_VANTAGE_API_KEY or another licensed provider."
+    "This is a rules-based market intelligence dashboard, not investment advice.",
+    "ETF/stock quote fields require ALPHA_VANTAGE_API_KEY or another licensed market-data provider.",
+    "FRED_API_KEY is recommended for production reliability, although a public CSV fallback is included for personal prototyping."
   ]
 }
