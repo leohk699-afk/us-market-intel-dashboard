@@ -1,0 +1,204 @@
+# V1 indicator registry for US Market Intelligence Dashboard
+# weight: contribution to total score; positive_is_risk: true means higher value usually increases risk.
+# Most macro series use FRED. Equity/ETF quote data is optional and can be added via Alpha Vantage or another licensed market-data provider.
+
+modules:
+  rates:
+    name: 利率与美债
+    weight: 25
+    indicators:
+      - id: dgs2
+        label: 2Y Treasury Yield
+        source: fred
+        series: DGS2
+        unit: "%"
+        positive_is_risk: true
+      - id: dgs10
+        label: 10Y Treasury Yield
+        source: fred
+        series: DGS10
+        unit: "%"
+        positive_is_risk: true
+      - id: dfii10
+        label: 10Y Real Yield
+        source: fred
+        series: DFII10
+        unit: "%"
+        positive_is_risk: true
+      - id: t10yie
+        label: 10Y Breakeven Inflation
+        source: fred
+        series: T10YIE
+        unit: "%"
+        positive_is_risk: true
+      - id: curve_10y2y
+        label: 10Y-2Y Curve
+        source: derived
+        formula: dgs10 - dgs2
+        unit: "bp"
+        positive_is_risk: conditional
+
+  inflation_jobs:
+    name: 通胀与就业
+    weight: 20
+    indicators:
+      - id: cpiaucsl_yoy
+        label: CPI YoY
+        source: fred_yoy
+        series: CPIAUCSL
+        unit: "%"
+        positive_is_risk: true
+      - id: cpilfesl_yoy
+        label: Core CPI YoY
+        source: fred_yoy
+        series: CPILFESL
+        unit: "%"
+        positive_is_risk: true
+      - id: pcepi_yoy
+        label: PCE YoY
+        source: fred_yoy
+        series: PCEPI
+        unit: "%"
+        positive_is_risk: true
+      - id: pcepilfe_yoy
+        label: Core PCE YoY
+        source: fred_yoy
+        series: PCEPILFE
+        unit: "%"
+        positive_is_risk: true
+      - id: unrate
+        label: Unemployment Rate
+        source: fred
+        series: UNRATE
+        unit: "%"
+        positive_is_risk: true
+      - id: icsa
+        label: Initial Jobless Claims
+        source: fred
+        series: ICSA
+        unit: "claims"
+        positive_is_risk: true
+      - id: payems_mom
+        label: Nonfarm Payrolls MoM
+        source: fred_mom
+        series: PAYEMS
+        unit: "k"
+        positive_is_risk: conditional
+
+  volatility:
+    name: 波动率与风险偏好
+    weight: 20
+    indicators:
+      - id: vixcls
+        label: VIX
+        source: fred
+        series: VIXCLS
+        unit: ""
+        positive_is_risk: true
+      - id: move
+        label: MOVE Index
+        source: manual_or_provider
+        unit: ""
+        positive_is_risk: true
+      - id: put_call
+        label: Put/Call Ratio
+        source: manual_or_provider
+        unit: ""
+        positive_is_risk: true
+
+  credit_liquidity:
+    name: 信用与流动性
+    weight: 15
+    indicators:
+      - id: hy_oas
+        label: High Yield OAS
+        source: fred
+        series: BAMLH0A0HYM2
+        unit: "%"
+        positive_is_risk: true
+      - id: ig_oas
+        label: Investment Grade OAS
+        source: fred
+        series: BAMLC0A0CM
+        unit: "%"
+        positive_is_risk: true
+      - id: walcl
+        label: Fed Balance Sheet
+        source: fred
+        series: WALCL
+        unit: "USD mn"
+        positive_is_risk: false
+      - id: rrp
+        label: Overnight Reverse Repo
+        source: fred
+        series: RRPONTSYD
+        unit: "USD bn"
+        positive_is_risk: conditional
+      - id: dxy
+        label: DXY Dollar Index
+        source: market_data_provider
+        unit: ""
+        positive_is_risk: true
+
+  market_structure:
+    name: 美股内部结构
+    weight: 15
+    indicators:
+      - id: spy
+        label: SPY
+        source: market_data_provider
+        symbol: SPY
+        unit: "USD"
+        positive_is_risk: false
+      - id: qqq
+        label: QQQ
+        source: market_data_provider
+        symbol: QQQ
+        unit: "USD"
+        positive_is_risk: false
+      - id: iwm
+        label: IWM
+        source: market_data_provider
+        symbol: IWM
+        unit: "USD"
+        positive_is_risk: false
+      - id: smh
+        label: SMH Semiconductor ETF
+        source: market_data_provider
+        symbol: SMH
+        unit: "USD"
+        positive_is_risk: false
+      - id: rsp
+        label: RSP Equal Weight S&P 500
+        source: market_data_provider
+        symbol: RSP
+        unit: "USD"
+        positive_is_risk: false
+
+  commodities:
+    name: 商品与避险
+    weight: 5
+    indicators:
+      - id: wti
+        label: WTI Crude Oil
+        source: fred
+        series: DCOILWTICO
+        unit: "USD/bbl"
+        positive_is_risk: true
+      - id: gold
+        label: Gold Price
+        source: fred
+        series: GOLDAMGBD228NLBM
+        unit: "USD/oz"
+        positive_is_risk: conditional
+      - id: silver
+        label: Silver Price
+        source: market_data_provider
+        unit: "USD/oz"
+        positive_is_risk: conditional
+      - id: gold_silver_ratio
+        label: Gold/Silver Ratio
+        source: derived
+        formula: gold / silver
+        unit: "x"
+        positive_is_risk: true

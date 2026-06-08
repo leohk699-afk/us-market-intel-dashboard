@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>美股宏观情报员 Dashboard</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>美股宏观情报员</h1>
+      <p class="subtitle">Rates · Inflation · Volatility · Credit · Market Structure · Commodities</p>
+    </div>
+    <div class="timestamp" id="generatedAt">更新中...</div>
+  </header>
+
+  <main>
+    <section class="hero" id="hero">
+      <div class="status-pill" id="overallStatus">--</div>
+      <div class="score-wrap">
+        <div class="score" id="overallScore">--</div>
+        <div class="score-label">综合风险分</div>
+      </div>
+      <p id="summary">正在加载最新市场情报...</p>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>核心风险因子</h2>
+        <div id="topRisks" class="risk-list"></div>
+      </div>
+      <div class="card">
+        <h2>使用说明</h2>
+        <ul class="notes">
+          <li>绿色：风险偏好较友好，可以寻找机会。</li>
+          <li>黄色：可交易但不宜重仓追高，等待确认。</li>
+          <li>红色：防守优先，降低高波动仓位。</li>
+          <li>本系统是信息聚合与风险监测，不是投资建议。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">模块雷达</h2>
+      <div class="modules" id="modules"></div>
+    </section>
+
+    <section>
+      <h2 class="section-title">指标明细</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>模块</th>
+              <th>指标</th>
+              <th>最新值</th>
+              <th>日期</th>
+              <th>1期变化</th>
+              <th>5期变化</th>
+              <th>风险分</th>
+              <th>状态</th>
+            </tr>
+          </thead>
+          <tbody id="indicatorRows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>V1 dashboard · 数据每日自动更新 · 可迭代指标注册表：config/indicators.yml</span>
+  </footer>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>
