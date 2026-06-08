@@ -187,8 +187,7 @@ modules:
         positive_is_risk: true
       - id: gold
         label: Gold Price
-        source: fred
-        series: GOLDAMGBD228NLBM
+        source: manual_or_provider
         unit: "USD/oz"
         positive_is_risk: conditional
       - id: silver
